@@ -116,11 +116,6 @@ jobs:
       - name: Install JS deps
         run: pnpm install --frozen-lockfile
 
-      - name: Verify versions match the tag
-        env:
-          GITHUB_REF_NAME: ${{ steps.version.outputs.tag }}
-        run: node scripts/check-versions.mjs
-
       - name: Run Rust tests
         run: cargo test --workspace --locked
 

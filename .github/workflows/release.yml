@@ -105,7 +105,13 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libsoup-3.0-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libsoup-3.0-dev xvfb
+
+      - name: Start virtual display
+        if: matrix.platform == 'linux'
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
 
       - name: Install JS deps
         run: pnpm install --frozen-lockfile
@@ -135,6 +141,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Headless Linux: suppress hardware EGL/DMA-BUF paths that fail
+          # without a real GPU device node; Xvfb provides the X11 socket
+          # WebKit needs even when falling back to software rendering.
+          WEBKIT_DISABLE_COMPOSITING_MODE: ${{ matrix.platform == 'linux' && '1' || '' }}
+          WEBKIT_DISABLE_DMABUF_RENDERER: ${{ matrix.platform == 'linux' && '1' || '' }}
           # NOTE: the app no longer bakes in a Supabase connection at build
           # time. Each user enters their own Supabase URL + anon key in-app
           # (auth modal → Connect step), persisted locally. There is no

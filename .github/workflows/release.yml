@@ -134,8 +134,6 @@ jobs:
           # signs cleanly but the upload step exits with
           # "##[error]GITHUB_TOKEN is required".
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           # Headless Linux: suppress hardware EGL/DMA-BUF paths that fail
           # without a real GPU device node; Xvfb provides the X11 socket
           # WebKit needs even when falling back to software rendering.
